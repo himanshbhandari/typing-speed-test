@@ -99,7 +99,7 @@ const SignupForm = () => {
         }}
         onClick = {handleSubmit}
         >
-        Signup</Button>
+        Sign up</Button>
     </Box>
   )
 }
