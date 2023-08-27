@@ -1,4 +1,5 @@
 
+
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -65,9 +66,9 @@ const UserPage = () => {
         <Graph graphData={graphData} />
       </div>
       <UserTableData data={data} />
-
     </div>
   );
 };
 
 export default UserPage;
+
