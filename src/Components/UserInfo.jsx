@@ -10,7 +10,7 @@ const UserInfo = ({totalTests}) => {
     const navigate = useNavigate()
     return (
        <div>
-       <div onClick={()=>navigate('/')}>< </div>
+       <div onClick={()=>navigate('/')}> </div>
          <div className="user-profile">
             
             <div className="user">
