@@ -1,9 +1,9 @@
-import React, { createRef, useEffect, useRef, useState, useMemo } from 'react'
+        import React, { createRef, useEffect, useRef, useState, useMemo } from 'react'
 import { generate } from "random-words";
 import { useTestMode } from '../Context/TestModeContext';
 import UpperMenu from './UpperMenu';
 import Stats from './Stats';
-
+import { IoIosRefresh } from 'react-icons/io';
 // childNodes property is a property of a DOM element 
 
 const TypingBox = () => {
@@ -19,16 +19,22 @@ const TypingBox = () => {
     const [missedChars, setMissedChars] = useState(0) //if some times charcters miss when click space.
     const [extraChars, setExtraChars] = useState(0)
     const [correctWords, setCorrectWords] = useState(0)
+
     const [wordsArray, setWordsArray] = useState(() => {
         return generate(50);
     })
+
 
     const [graphData, setGraphData] = useState([])
 
     const [currentWordIndex, setCurrentWordIndex] = useState(0)
     const [currentCharIndex, setCurrentCharIndex] = useState(0)
 
-
+    const handleWords = (count) => {
+        setWordsArray((() => {
+            return generate(count);
+        }))
+    }
     const startTimer = () => {
         const interval = setInterval(timer, 1000);
         setIntervalId(interval)
@@ -54,6 +60,7 @@ const TypingBox = () => {
         }
 
     }
+
 
 
 
@@ -100,33 +107,38 @@ const TypingBox = () => {
             startTimer()
             setTestStart(true)
         }
-        // retrieves all the child nodes (individual characters) of the current word from the wordsSpanRef array
+
+
+        // Get the current word's reference
+        const currentWordRef = wordsSpanRef[currentWordIndex].current;
         const allCurrentChars = wordsSpanRef[currentWordIndex].current.childNodes
 
+        // retrieves all the child nodes (individual characters) of the current word from the wordsSpanRef array
+        if (currentWordRef) {
+            //logic for space
+            if (e.keyCode === 32) {//keycode for space - 32
 
-        //logic for space
-        if (e.keyCode === 32) {//keycode for space - 32
+                let correctCharsInWord = wordsSpanRef[currentWordIndex].current.querySelectorAll('.correct')
 
-            let correctCharsInWord = wordsSpanRef[currentWordIndex].current.querySelectorAll('.correct')
+                if (correctCharsInWord.length === allCurrentChars.length) {
+                    setCorrectWords(correctWords + 1) //entair word typed correctly ready to move to next word
+                }
 
-            if (correctCharsInWord.length === allCurrentChars.length) {
-                setCorrectWords(correctWords + 1) //entair word typed correctly ready to move to next word
+                if (allCurrentChars.length <= currentCharIndex) {
+                    //remove cursor from last place in a node
+                    allCurrentChars[currentCharIndex - 1].classList.remove('current-right')
+                } else {
+                    setMissedChars(missedChars + (allCurrentChars.length - currentCharIndex)) // gives how many chars missed
+                    //remove cursor from inbetween of node
+                    allCurrentChars[currentCharIndex].classList.remove('current')
+                }
+
+                wordsSpanRef[currentWordIndex + 1].current.childNodes[0].className = 'current';//cursor visible at every first letter of word
+
+                setCurrentCharIndex(0) //repeat from 0 if jump to nextword
+                setCurrentWordIndex(currentWordIndex + 1)  //if space happen jump to next word.
+                return;
             }
-
-            if (allCurrentChars.length <= currentCharIndex) {
-                //remove cursor from last place in a node
-                allCurrentChars[currentCharIndex - 1].classList.remove('current-right')
-            } else {
-                setMissedChars(missedChars + (allCurrentChars.length - currentCharIndex)) // gives how many chars missed
-                //remove cursor from inbetween of node
-                allCurrentChars[currentCharIndex].classList.remove('current')
-            }
-
-            wordsSpanRef[currentWordIndex + 1].current.childNodes[0].className = 'current';//cursor visible at every first letter of word
-
-            setCurrentCharIndex(0) //repeat from 0 if jump to nextword
-            setCurrentWordIndex(currentWordIndex + 1)  //if space happen jump to next word.
-            return;
         }
 
         //logic for backspace
@@ -187,9 +199,12 @@ const TypingBox = () => {
         setCurrentCharIndex(currentCharIndex + 1) // Move to the next character
     }
 
+
+
     const focusInput = () => {
         inputRef.current.focus()
     }
+
 
     useEffect(() => {
         setCountDown(testTime)
@@ -203,13 +218,34 @@ const TypingBox = () => {
         focusInput()
         wordsSpanRef[0].current.childNodes[0].className = 'current'; //cursor visible at first letter of word at mount
     }, [])
+
+    useEffect(() => {
+        const handleDoubleClicks = (e) => {
+            console.log(e)
+
+            if (e.keyCode === 27) {
+                resetTest()
+            } else if (e.keyCode === 18) {
+
+            }
+
+        };
+
+
+        window.addEventListener('keydown', handleDoubleClicks);
+
+        return () => {
+            window.removeEventListener('keydown', handleDoubleClicks);
+        };
+    });
+
     return (
         <div>
-            <UpperMenu countDown={countDown} />
+            {!testEnd && <UpperMenu countDown={countDown} />}
             <div className='type-box' onClick={focusInput}>
                 {
-                    testEnd ? <Stats wpm={calculateWPM()} accuracy={calcualteAccuracy()} correctChars={correctChars} incorrectChars={incorrectChars} missedChars={missedChars} extraChars={extraChars} graphData={graphData}/> :
-                        (<div className='words'>
+                    testEnd ? <Stats startTimer={startTimer} setTestEnd={setTestEnd} setCountDown={setCountDown} setWordsArray={setWordsArray} setCurrentCharIndex={setCorrectChars} setCurrentWordIndex={setCurrentWordIndex} wpm={calculateWPM()} accuracy={calcualteAccuracy()} correctChars={correctChars} incorrectChars={incorrectChars} missedChars={missedChars} extraChars={extraChars} graphData={graphData} /> :
+                        (<code className='words'>
                             {
                                 wordsArray.map((word, index) => (
                                     <span className='word' ref={wordsSpanRef[index]}>
@@ -221,7 +257,7 @@ const TypingBox = () => {
                                     </span>
                                 ))
                             }
-                        </div>)
+                        </code>)
                 }
                 <input
                     type="text"
@@ -230,6 +266,25 @@ const TypingBox = () => {
                     //the reference of the input element will be present inside the inputref
                     ref={inputRef}
                 />
+                {!testEnd &&
+                    <center className='btn-container'>
+                        <div className='refresh'>
+                            <IoIosRefresh onClick={resetTest} />
+                        </div>
+                        <div>
+                            <button className='bottom-btn'>esc</button>
+                            <span className='bottom-span'>-</span>
+                            <span className='bottom-span'>reset</span>
+                        </div>
+                        <button className='bottom-btn' onClick={() => handleWords(10)}>10</button>
+                        {/* <button className='bottom-btn' onClick={()=>handleWords(25)}>25</button> */}
+                        <button className='bottom-btn' onClick={() => handleWords(50)}>50</button>
+                        <button className='bottom-btn' onClick={() => handleWords(80)}>80</button>
+                        <button className='bottom-btn' onClick={() => handleWords(100)}>100</button>
+                        <span className='bottom-span'>-</span>
+                        <span className='bottom-span'>no. of words</span>
+                    </center>
+                }
             </div>
         </div>
     )
