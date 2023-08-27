@@ -37,8 +37,8 @@ const Graph = ({graphData}) => {
                             {
                                 data: graphData.map(i=>i[1]),
                                 label: 'wpm',
-                                borderColor: 'white',
-                                color :'red'
+                                borderColor: 'red',
+                                color :theme.textColor
 
                             },   
                         ]
