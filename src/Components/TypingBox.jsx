@@ -3,7 +3,7 @@ import { generate } from "random-words";
 import { useTestMode } from '../Context/TestModeContext';
 import UpperMenu from './UpperMenu';
 import Stats from './Stats';
-import { IoIosRefresh } from 'react-icons/io';
+import RefreshIcon from '@mui/icons-material/Refresh';
 // childNodes property is a property of a DOM element 
 
 const TypingBox = () => {
@@ -269,7 +269,7 @@ const TypingBox = () => {
                 {!testEnd &&
                     <center className='btn-container'>
                         <div className='refresh'>
-                            <IoIosRefresh onClick={resetTest} />
+                            <RefreshIcon  onClick={resetTest} />
                         </div>
                         <div>
                             <button className='bottom-btn'>esc</button>
