@@ -1,53 +1,64 @@
 import React, { useEffect } from 'react'
 import Graph from './Graph'
-import { db,auth } from '../firebaseConfig';
+import { db, auth } from '../firebaseConfig';
 import { toast } from 'react-toastify';
+import { generate } from 'random-words';
 
-const Stats = ({ wpm, accuracy, correctChars, incorrectChars, missedChars, extraChars, graphData}) => {
+const Stats = ({startTimer, setTestEnd, setCountDown, setWordsArray, setCurrentCharIndex, setCurrentWordIndex, wpm, accuracy, correctChars, incorrectChars, missedChars, extraChars, graphData }) => {
 
     let timeSet = new Set();
-    const newGraph = graphData.filter(i=>{
-        if(!timeSet.has(i[0])){
+    const newGraph = graphData.filter(i => {
+        if (!timeSet.has(i[0])) {
             timeSet.add(i[0]);
             return i;
         }
     })
+    const handleBackButtonClick = () => {
+        setTestEnd(false); // Reset the testEnd state
+        setCountDown(15)
+        setWordsArray(() => generate(50))
+        setCurrentWordIndex(0)
+        setCurrentCharIndex(0)
+        startTimer()
+        // focusInput(); // Focus the input again
+    };
 
-    const pushDataToDB = ()=>{
+
+    const pushDataToDB = () => {
 
         //not even type single word correctly. 
-        if(isNaN(accuracy)){
+        if (isNaN(accuracy)) {
             toast.error('Invalid test')
             return;
         }
         const resultRef = db.collection('Results') //firestore create database if there is not created.
-        const {uid} = auth.currentUser;
+        const { uid } = auth.currentUser;
         resultRef.add(
             {
-                wpm : wpm,
-                accuracy:accuracy,
-                timeStamp : new Date(),
-                Characters:`${correctChars}/${incorrectChars}/${missedChars}/${extraChars}`,
-                uid : uid,
+                wpm: wpm,
+                accuracy: accuracy,
+                timeStamp: new Date(),
+                Characters: `${correctChars}/${incorrectChars}/${missedChars}/${extraChars}`,
+                uid: uid,
                 // name : 'user name'
             }
-        ).then((res)=>{
+        ).then((res) => {
             toast.success("Data saved to db")
-        }).catch((err)=>{
+        }).catch((err) => {
             toast.success("Not able to save results");
         })
 
     }
 
     //check user is logged in or not(existed or not)
-    useEffect(()=>{
-        if(auth.currentUser){
+    useEffect(() => {
+        if (auth.currentUser) {
             pushDataToDB();
-        }else{
+        } else {
             toast.warning('Login to save results')
         }
     })
-    
+
 
     return (
         <div className="stats-box">
@@ -60,8 +71,11 @@ const Stats = ({ wpm, accuracy, correctChars, incorrectChars, missedChars, extra
                 <div className="subtitle">{correctChars}/{incorrectChars}/{missedChars}/{extraChars}</div>
             </div>
             <div className="right-stats">
-                <Graph graphData={newGraph}/>
+                <Graph graphData={newGraph} />
 
+            </div>
+            <div>
+                <button className='bottom-btn' onClick={handleBackButtonClick}>Back</button>
             </div>
         </div>
     )
