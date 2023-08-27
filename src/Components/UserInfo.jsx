@@ -1,14 +1,19 @@
 import React from 'react'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebaseConfig';
-
+import { auth } from '../firebaseConfig'; 
+import {IoArrowBackCircleSharp} from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 
 const UserInfo = ({totalTests}) => {
 
     const [user] = useAuthState(auth)//firebase hook
+    const navigate = useNavigate()
     return (
-        <div className="user-profile">
+       <div>
+       <div onClick={()=>navigate('/')}> <IoArrowBackCircleSharp size="3rem"/></div>
+         <div className="user-profile">
+            
             <div className="user">
                 <div className="picture">
                     <AccountCircleIcon style={{transform : 'scale(4)'}}/>
@@ -27,6 +32,7 @@ const UserInfo = ({totalTests}) => {
                 <span>Total test taken - {totalTests}</span>
             </div>
         </div>
+       </div>
     )
 }
 
