@@ -2,6 +2,10 @@ import React from 'react'
 import { themeOptions } from '../Utilities/ThemeJSON'
 import Select from 'react-select';
 import { useTheme } from '../Context/ThemeContext';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import AttachEmailIcon from '@mui/icons-material/AttachEmail';
+import InstagramIcon from '@mui/icons-material/Instagram';
 // https://react-select.com/home  //https://react-select.com/styles
 
 
@@ -17,7 +21,10 @@ const Footer = () => {
     return (
         <div className='footer'>
             <div className="links">
-                Links
+                <GitHubIcon/>
+                <LinkedInIcon/>
+                <AttachEmailIcon/>
+                <InstagramIcon/>
             </div>
             <div className="themeButton">
                 <Select
