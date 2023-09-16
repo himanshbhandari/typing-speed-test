@@ -1,9 +1,11 @@
-        import React, { createRef, useEffect, useRef, useState, useMemo } from 'react'
+import React, { createRef, useEffect, useRef, useState, useMemo } from 'react'
 import { generate } from "random-words";
 import { useTestMode } from '../Context/TestModeContext';
 import UpperMenu from './UpperMenu';
 import Stats from './Stats';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { useNavigate } from 'react-router-dom';
+
 // childNodes property is a property of a DOM element 
 
 const TypingBox = () => {
@@ -20,9 +22,12 @@ const TypingBox = () => {
     const [extraChars, setExtraChars] = useState(0)
     const [correctWords, setCorrectWords] = useState(0)
 
+    const navigate = useNavigate();
+
     const [wordsArray, setWordsArray] = useState(() => {
         return generate(50);
     })
+
 
 
     const [graphData, setGraphData] = useState([])
@@ -244,7 +249,7 @@ const TypingBox = () => {
             {!testEnd && <UpperMenu countDown={countDown} />}
             <div className='type-box' onClick={focusInput}>
                 {
-                    testEnd ? <Stats startTimer={startTimer} setTestEnd={setTestEnd} setCountDown={setCountDown} setWordsArray={setWordsArray} setCurrentCharIndex={setCorrectChars} setCurrentWordIndex={setCurrentWordIndex} wpm={calculateWPM()} accuracy={calcualteAccuracy()} correctChars={correctChars} incorrectChars={incorrectChars} missedChars={missedChars} extraChars={extraChars} graphData={graphData} /> :
+                    testEnd ? <div><Stats  wpm={calculateWPM()} accuracy={calcualteAccuracy()} correctChars={correctChars} incorrectChars={incorrectChars} missedChars={missedChars} extraChars={extraChars} graphData={graphData} /><button onClick={()=>setTestEnd(false)}  type="button">Try Again</button></div> :
                         (<code className='words'>
                             {
                                 wordsArray.map((word, index) => (

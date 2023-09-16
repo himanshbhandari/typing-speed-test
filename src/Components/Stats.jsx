@@ -4,7 +4,7 @@ import { db, auth } from '../firebaseConfig';
 import { toast } from 'react-toastify';
 import { generate } from 'random-words';
 
-const Stats = ({startTimer, setTestEnd, setCountDown, setWordsArray, setCurrentCharIndex, setCurrentWordIndex, wpm, accuracy, correctChars, incorrectChars, missedChars, extraChars, graphData }) => {
+const Stats = ({wpm, accuracy, correctChars, incorrectChars, missedChars, extraChars, graphData }) => {
 
     let timeSet = new Set();
     const newGraph = graphData.filter(i => {
@@ -13,16 +13,7 @@ const Stats = ({startTimer, setTestEnd, setCountDown, setWordsArray, setCurrentC
             return i;
         }
     })
-    const handleBackButtonClick = () => {
-        setTestEnd(false); // Reset the testEnd state
-        setCountDown(15)
-        setWordsArray(() => generate(50))
-        setCurrentWordIndex(0)
-        setCurrentCharIndex(0)
-        startTimer()
-        // focusInput(); // Focus the input again
-    };
-
+   
 
     const pushDataToDB = () => {
 
@@ -74,9 +65,7 @@ const Stats = ({startTimer, setTestEnd, setCountDown, setWordsArray, setCurrentC
                 <Graph graphData={newGraph} />
 
             </div>
-            <div>
-                <button className='bottom-btn' onClick={handleBackButtonClick}>Back</button>
-            </div>
+           
         </div>
     )
 }
