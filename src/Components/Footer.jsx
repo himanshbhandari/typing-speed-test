@@ -21,10 +21,10 @@ const Footer = () => {
     return (
         <div className='footer'>
             <div className="links">
-                <GitHubIcon/>
-                <LinkedInIcon/>
-                <AttachEmailIcon/>
-                <InstagramIcon/>
+                <a href="#"><GitHubIcon /></a>
+                <a href="https://www.linkedin.com/in/sravani-putturu-36956a252/"><LinkedInIcon /></a>
+                <a href="#"><AttachEmailIcon /></a>
+                <a href="#"><InstagramIcon /></a>
             </div>
             <div className="themeButton">
                 <Select
